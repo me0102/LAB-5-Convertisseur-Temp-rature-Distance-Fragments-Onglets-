@@ -1,0 +1,75 @@
+package com.example.convertertabsjava;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.viewpager2.widget.ViewPager2;
+import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
+import androidx.activity.OnBackPressedCallback; // NOUVEL IMPORT IMPORTANT
+import androidx.appcompat.app.AlertDialog;
+import com.google.android.material.tabs.TabLayout;
+import com.google.android.material.tabs.TabLayoutMediator;
+
+public class MainActivity extends AppCompatActivity {
+
+    TabLayout tabLayout;
+    ViewPager2 viewPager;
+    ViewPagerAdapter adapter;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        // Changer le titre de la barre d'action pour correspondre à votre image
+        setTitle("Converter");
+
+        tabLayout = findViewById(R.id.tabLayout);
+        viewPager = findViewById(R.id.viewPager);
+
+        // Liaison du ViewPager avec l’adaptateur
+        adapter = new ViewPagerAdapter(this);
+        viewPager.setAdapter(adapter);
+
+        // Liaison des onglets avec le ViewPager
+        new TabLayoutMediator(tabLayout, viewPager,
+                (tab, position) -> tab.setText(position == 0 ? "Température" : "Distance")
+        ).attach();
+
+        // NOUVELLE MÉTHODE : Intercepte la touche Retour physique du téléphone
+        getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                afficherDialogueQuitter();
+            }
+        });
+    }
+
+    // 1. Affiche le menu dans la barre d'action
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        return true;
+    }
+
+    // 2. Gère le clic sur l'élément du menu "Quitter"
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        if (item.getItemId() == R.id.action_quitter) {
+            afficherDialogueQuitter();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    // 3. Méthode commune pour afficher la confirmation
+    private void afficherDialogueQuitter() {
+        new AlertDialog.Builder(this)
+                .setTitle("Quitter")
+                .setMessage("Voulez-vous vraiment quitter l'application ?")
+                .setPositiveButton("Oui", (dialog, which) -> finish())
+                .setNegativeButton("Non", null)
+                .show();
+    }
+}

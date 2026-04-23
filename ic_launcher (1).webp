@@ -1,0 +1,63 @@
+package com.example.convertertabsjava;
+
+
+import android.os.Bundle;
+import android.text.TextUtils;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.*;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+
+public class TempFragment extends Fragment {
+
+    RadioGroup rgTemp;
+    RadioButton rbCtoF, rbFtoC;
+    EditText etTempInput;
+    Button btnConvertTemp;
+    TextView tvTempResult;
+
+    @Nullable
+    @Override
+    public View onCreateView(@NonNull LayoutInflater inflater,
+                             @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+
+        // Lie ce code au fichier XML que nous venons de créer
+        View view = inflater.inflate(R.layout.fragment_temp, container, false);
+
+        // Récupération des éléments de l'interface
+        rgTemp = view.findViewById(R.id.rgTemp);
+        rbCtoF = view.findViewById(R.id.rbCtoF);
+        rbFtoC = view.findViewById(R.id.rbFtoC);
+        etTempInput = view.findViewById(R.id.etTempInput);
+        btnConvertTemp = view.findViewById(R.id.btnConvertTemp);
+        tvTempResult = view.findViewById(R.id.tvTempResult);
+
+        // Action quand on clique sur le bouton "Calculer"
+        btnConvertTemp.setOnClickListener(v -> {
+            String input = etTempInput.getText().toString();
+
+            // Vérifie si le champ est vide
+            if (TextUtils.isEmpty(input)) {
+                Toast.makeText(getContext(), "Veuillez entrer une valeur", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            double val = Double.parseDouble(input);
+            double result;
+
+            // Formules de conversion
+            if (rbCtoF.isChecked())
+                result = (1.8 * val) + 32;
+            else
+                result = (val - 32) / 1.8;
+
+            // Affiche le résultat avec 2 chiffres après la virgule
+            tvTempResult.setText("Résultat : " + String.format("%.2f", result));
+        });
+
+        return view;
+    }
+}
